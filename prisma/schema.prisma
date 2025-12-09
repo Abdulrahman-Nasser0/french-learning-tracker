@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// User model with authentication and preferences
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  name              String
+  createdAt         DateTime @default(now())
+  emailVerified     Boolean  @default(false)
+  targetLevel       String   @default("A1") // A1, A2, B1, B2, C1, C2
+  targetLanguage    String   @default("French")
+  dailyGoalHours    Float    @default(4.0)
+  weeklyGoalHours   Float    @default(28.0)
+  monthlyGoalHours  Float    @default(120.0)
+
+  // Relations
+  studySessions     StudySession[]
+  resources         Resource[]
+  tasks             Task[]
+  goals             Goal[]
+  exams             Exam[]
+  practiceTests     PracticeTest[]
+
+  @@map("users")
+}
+
+// Study sessions tracking
+model StudySession {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  duration    Int      // in minutes
+  studyType   String   // speaking, reading, writing, listening, grammar, vocabulary
+  notes       String?
+  resourceId  String?
+  createdAt   DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource    Resource? @relation(fields: [resourceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([date])
+  @@index([studyType])
+  @@map("study_sessions")
+}
+
+// Resources library
+model Resource {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  url           String?
+  type          String   // video, podcast, book, course, app, website, other
+  description   String?
+  status        String   @default("active") // active, completed
+  rating        Int?     // 1-5
+  notes         String?
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studySessions StudySession[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("resources")
+}
+
+// Tasks / To-do list
+model Task {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  type        String    // daily, weekly, backlog
+  priority    String    @default("medium") // high, medium, low
+  completed   Boolean   @default(false)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([completed])
+  @@map("tasks")
+}
+
+// Goals tracking
+model Goal {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // daily, weekly, monthly, milestone
+  title         String
+  targetValue   Float    // hours or custom metric
+  currentValue  Float    @default(0)
+  startDate     DateTime
+  endDate       DateTime
+  completed     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([completed])
+  @@map("goals")
+}
+
+// Exams tracking
+model Exam {
+  id            String   @id @default(cuid())
+  userId        String
+  examName      String
+  targetDate    DateTime
+  targetScore   Int?
+  createdAt     DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  practiceTests PracticeTest[]
+
+  @@index([userId])
+  @@map("exams")
+}
+
+// Practice test results
+model PracticeTest {
+  id             String   @id @default(cuid())
+  userId         String
+  examId         String
+  dateTaken      DateTime
+  speakingScore  Int
+  readingScore   Int
+  writingScore   Int
+  listeningScore Int
+  totalScore     Int
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam           Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([examId])
+  @@map("practice_tests")
+}
