@@ -18,7 +18,7 @@ const protectedRoutes = [
 // Public routes that authenticated users shouldn't access
 const authRoutes = ['/sign-in', '/sign-up'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('auth-token')?.value;
 
