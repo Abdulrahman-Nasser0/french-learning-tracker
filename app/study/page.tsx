@@ -11,12 +11,12 @@ import { Label } from '@/components/ui/label';
 import { studySessionSchema, type StudySessionInput } from '@/lib/validations/study';
 
 const studyTypes = [
-  { value: 'speaking', label: '🗣️ Speaking', color: 'bg-red-100 text-red-700' },
-  { value: 'reading', label: '📖 Reading', color: 'bg-blue-100 text-blue-700' },
-  { value: 'writing', label: '✍️ Writing', color: 'bg-green-100 text-green-700' },
-  { value: 'listening', label: '🎧 Listening', color: 'bg-purple-100 text-purple-700' },
-  { value: 'grammar', label: '📝 Grammar', color: 'bg-yellow-100 text-yellow-700' },
-  { value: 'vocabulary', label: '📚 Vocabulary', color: 'bg-pink-100 text-pink-700' },
+  { value: 'speaking', label: '🗣️ Speaking', color: 'bg-gradient-to-br from-red-500 to-orange-500 text-white', border: 'border-red-500' },
+  { value: 'reading', label: '📖 Reading', color: 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white', border: 'border-blue-500' },
+  { value: 'writing', label: '✍️ Writing', color: 'bg-gradient-to-br from-green-500 to-emerald-500 text-white', border: 'border-green-500' },
+  { value: 'listening', label: '🎧 Listening', color: 'bg-gradient-to-br from-purple-500 to-pink-500 text-white', border: 'border-purple-500' },
+  { value: 'grammar', label: '📝 Grammar', color: 'bg-gradient-to-br from-orange-500 to-yellow-500 text-white', border: 'border-orange-500' },
+  { value: 'vocabulary', label: '📚 Vocabulary', color: 'bg-gradient-to-br from-pink-500 to-rose-500 text-white', border: 'border-pink-500' },
 ];
 
 export default function StudyPage() {
@@ -84,26 +84,26 @@ export default function StudyPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Log Study Session</h1>
-        <p className="text-gray-600">Track your learning progress by logging your study time</p>
+      <div className="mb-8 animate-fade-in">
+        <h1 className="text-4xl font-bold gradient-text mb-2">Log Study Session 📚</h1>
+        <p className="text-gray-600 text-lg">Track your learning progress by logging your study time</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Session Details</CardTitle>
-            <CardDescription>Fill in the details of your study session</CardDescription>
+        <Card className="shadow-xl border-none">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
+            <CardTitle className="text-2xl">Session Details</CardTitle>
+            <CardDescription className="text-base">Fill in the details of your study session</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-                {error}
+              <div className="bg-red-50 border-2 border-red-300 text-red-700 px-4 py-3 rounded-xl font-medium shadow-sm">
+                ❌ {error}
               </div>
             )}
 
             {success && (
-              <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md">
+              <div className="bg-green-50 border-2 border-green-300 text-green-700 px-4 py-3 rounded-xl font-medium shadow-sm animate-fade-in">
                 ✅ Session logged successfully! Redirecting to dashboard...
               </div>
             )}
@@ -145,6 +145,7 @@ export default function StudyPage() {
                     size="sm"
                     onClick={() => setValue('duration', 30)}
                     disabled={isLoading}
+                    className="hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 font-semibold"
                   >
                     30 min
                   </Button>
@@ -154,6 +155,7 @@ export default function StudyPage() {
                     size="sm"
                     onClick={() => setValue('duration', 60)}
                     disabled={isLoading}
+                    className="hover:bg-purple-50 hover:border-purple-400 hover:text-purple-700 font-semibold"
                   >
                     1 hr
                   </Button>
@@ -163,6 +165,7 @@ export default function StudyPage() {
                     size="sm"
                     onClick={() => setValue('duration', 120)}
                     disabled={isLoading}
+                    className="hover:bg-pink-50 hover:border-pink-400 hover:text-pink-700 font-semibold"
                   >
                     2 hrs
                   </Button>
@@ -175,7 +178,7 @@ export default function StudyPage() {
 
             {/* Study Type */}
             <div className="space-y-2">
-              <Label>Study Type</Label>
+              <Label className="text-base font-semibold">Study Type</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {studyTypes.map((type) => (
                   <button
@@ -183,15 +186,18 @@ export default function StudyPage() {
                     type="button"
                     onClick={() => setValue('studyType', type.value as any)}
                     disabled={isLoading}
-                    className={`p-4 rounded-lg border-2 text-left transition-all ${
+                    className={`p-4 rounded-xl border-2 text-left transition-all transform hover:scale-105 ${
                       selectedType === type.value
-                        ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? `${type.border} shadow-lg scale-105`
+                        : 'border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <div className={`inline-block px-2 py-1 rounded text-sm font-medium mb-2 ${type.color}`}>
+                    <div className={`inline-block px-3 py-1.5 rounded-lg text-sm font-bold shadow-md ${type.color}`}>
                       {type.label}
                     </div>
+                    {selectedType === type.value && (
+                      <div className="mt-2 text-xs font-semibold text-gray-600">✓ Selected</div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -224,9 +230,9 @@ export default function StudyPage() {
             type="submit"
             size="lg"
             disabled={isLoading || success}
-            className="flex-1"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl text-lg font-semibold"
           >
-            {isLoading ? 'Logging...' : success ? 'Logged!' : '📚 Log Session'}
+            {isLoading ? '⏳ Logging...' : success ? '✅ Logged!' : '📚 Log Session'}
           </Button>
           <Button
             type="button"
@@ -234,6 +240,7 @@ export default function StudyPage() {
             size="lg"
             onClick={() => router.push('/dashboard')}
             disabled={isLoading}
+            className="hover:bg-gray-50 font-semibold"
           >
             Cancel
           </Button>
@@ -241,15 +248,27 @@ export default function StudyPage() {
       </form>
 
       {/* Quick Tips */}
-      <Card className="mt-8 bg-blue-50 border-blue-200">
+      <Card className="mt-8 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-purple-200 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-blue-900">💡 Quick Tips</CardTitle>
+          <CardTitle className="text-2xl gradient-text">💡 Quick Tips</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-blue-800 space-y-2">
-          <p>• Log sessions immediately after studying for accuracy</p>
-          <p>• Use notes to track what worked well or what needs improvement</p>
-          <p>• Consistent tracking helps you identify your learning patterns</p>
-          <p>• Try to balance different study types for well-rounded progress</p>
+        <CardContent className="text-sm text-gray-700 space-y-2.5 font-medium">
+          <p className="flex items-start">
+            <span className="text-blue-600 mr-2 text-lg">•</span>
+            <span>Log sessions immediately after studying for accuracy</span>
+          </p>
+          <p className="flex items-start">
+            <span className="text-purple-600 mr-2 text-lg">•</span>
+            <span>Use notes to track what worked well or what needs improvement</span>
+          </p>
+          <p className="flex items-start">
+            <span className="text-pink-600 mr-2 text-lg">•</span>
+            <span>Consistent tracking helps you identify your learning patterns</span>
+          </p>
+          <p className="flex items-start">
+            <span className="text-indigo-600 mr-2 text-lg">•</span>
+            <span>Try to balance different study types for well-rounded progress</span>
+          </p>
         </CardContent>
       </Card>
     </div>

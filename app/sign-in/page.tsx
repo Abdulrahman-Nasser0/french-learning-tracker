@@ -73,61 +73,60 @@ export default function SignInPage() {
               Sign in to continue your French learning journey 🚀
             </CardDescription>
           </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  {...register('email')}
+                  disabled={isLoading}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-600">{errors.email.message}</p>
+                )}
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                {...register('email')}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('password')}
+                  disabled={isLoading}
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-600">{errors.password.message}</p>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4 pt-6">
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg py-6 text-base font-semibold btn-glow" 
                 disabled={isLoading}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register('password')}
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <p className="text-sm text-red-600">{errors.password.message}</p>
-              )}
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4 pt-6">
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg py-6 text-base font-semibold btn-glow" 
-              disabled={isLoading}
-            >
-              {isLoading ? '⏳ Signing in...' : '🚀 Sign In'}
-            </Button>
-            <p className="text-sm text-center text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/sign-up" className="text-blue-600 hover:text-purple-600 font-semibold transition-colors">
-                Sign up for free →
-              </Link>
-            </p>
-          </CardFooter>
+              >
+                {isLoading ? '⏳ Signing in...' : '🚀 Sign In'}
+              </Button>
+              <p className="text-sm text-center text-gray-600">
+                Don't have an account?{' '}
+                <Link href="/sign-up" className="text-blue-600 hover:text-purple-600 font-semibold transition-colors">
+                  Sign up for free →
+                </Link>
+              </p>
+            </CardFooter>
+          </form>
         </Card>
       </div>
-        </form>
-      </Card>
     </div>
   );
 }

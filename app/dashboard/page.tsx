@@ -36,7 +36,7 @@ export default async function DashboardPage() {
     },
   });
 
-  const todayMinutes = todaySessions.reduce((sum, session) => sum + session.duration, 0);
+  const todayMinutes = todaySessions.reduce((sum: number, session: any) => sum + session.duration, 0);
   const todayHours = (todayMinutes / 60).toFixed(1);
 
   // Get total study time
@@ -44,14 +44,14 @@ export default async function DashboardPage() {
     where: { userId: currentUser.userId },
   });
 
-  const totalMinutes = allSessions.reduce((sum, session) => sum + session.duration, 0);
+  const totalMinutes = allSessions.reduce((sum: number, session: any) => sum + session.duration, 0);
   const totalHours = (totalMinutes / 60).toFixed(1);
 
   // Calculate streak (simplified - counts consecutive days with sessions)
   const uniqueDates = new Set(
-    allSessions.map(s => s.date.toISOString().split('T')[0])
+    allSessions.map((s: any) => s.date.toISOString().split('T')[0])
   );
-  const currentStreak = calculateStreak(Array.from(uniqueDates));
+  const currentStreak = calculateStreak(Array.from(uniqueDates) as string[]);
 
   if (!user) {
     redirect('/sign-in');
@@ -60,27 +60,27 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="animate-fade-in">
+        <h1 className="text-4xl font-bold gradient-text mb-2">
           Welcome back, {user.name}! 👋
         </h1>
-        <p className="text-gray-600 mt-1">
-          Learning {user.targetLanguage} • Target: {user.targetLevel}
+        <p className="text-gray-600 text-lg">
+          Learning <span className="font-semibold text-blue-600">{user.targetLanguage}</span> • Target: <span className="font-semibold text-purple-600">{user.targetLevel}</span>
         </p>
       </div>
 
       {/* Quick Action */}
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-xl hover:shadow-2xl transition-shadow animate-slide-in">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Ready to study?</h2>
-            <p className="text-indigo-100">
+            <h2 className="text-3xl font-bold mb-2">Ready to study? 🚀</h2>
+            <p className="text-white/90 text-lg">
               Log your study session and track your progress
             </p>
           </div>
           <Link href="/study">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
-              📚 Log Study Session
+            <Button size="lg" variant="secondary" className="text-lg px-8 shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+              📚 Start Session
             </Button>
           </Link>
         </div>
@@ -127,19 +127,31 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {allSessions.slice(0, 5).map((session) => (
-                  <div key={session.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium capitalize">{session.studyType}</p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(session.date).toLocaleDateString()}
-                      </p>
+                {allSessions.slice(0, 5).map((session: any) => {
+                  const typeColors: Record<string, string> = {
+                    speaking: 'bg-red-50 border-red-200 text-red-700',
+                    reading: 'bg-blue-50 border-blue-200 text-blue-700',
+                    writing: 'bg-green-50 border-green-200 text-green-700',
+                    listening: 'bg-purple-50 border-purple-200 text-purple-700',
+                    grammar: 'bg-orange-50 border-orange-200 text-orange-700',
+                    vocabulary: 'bg-pink-50 border-pink-200 text-pink-700',
+                  };
+                  const colorClass = typeColors[session.studyType] || 'bg-gray-50 border-gray-200 text-gray-700';
+                  
+                  return (
+                    <div key={session.id} className={`flex justify-between items-center p-4 rounded-xl border-2 ${colorClass} hover:shadow-md transition-all`}>
+                      <div>
+                        <p className="font-semibold capitalize">{session.studyType}</p>
+                        <p className="text-sm opacity-75">
+                          {new Date(session.date).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-lg">{session.duration} min</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-indigo-600">{session.duration} min</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>
@@ -165,32 +177,32 @@ export default async function DashboardPage() {
 
       {/* Getting Started Guide (shows if no sessions) */}
       {allSessions.length === 0 && (
-        <Card className="border-2 border-indigo-200 bg-indigo-50">
+        <Card className="border-2 border-purple-200 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-indigo-900">🚀 Getting Started</CardTitle>
-            <CardDescription>Follow these steps to make the most of your tracker</CardDescription>
+            <CardTitle className="text-2xl gradient-text">🚀 Getting Started</CardTitle>
+            <CardDescription className="text-gray-600 font-medium">Follow these steps to make the most of your tracker</CardDescription>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-3">
-              <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 mr-3 text-sm font-bold text-white bg-indigo-600 rounded-full flex-shrink-0">1</span>
+            <ol className="space-y-4">
+              <li className="flex items-start group">
+                <span className="inline-flex items-center justify-center w-8 h-8 mr-4 text-sm font-bold text-white bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">1</span>
                 <div>
-                  <p className="font-medium">Log your first study session</p>
-                  <p className="text-sm text-gray-600">Click "Log Study Session" and record your learning time</p>
+                  <p className="font-semibold text-lg text-gray-800">Log your first study session</p>
+                  <p className="text-sm text-gray-600 mt-1">Click "Start Session" and record your learning time</p>
                 </div>
               </li>
-              <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 mr-3 text-sm font-bold text-white bg-indigo-600 rounded-full flex-shrink-0">2</span>
+              <li className="flex items-start group">
+                <span className="inline-flex items-center justify-center w-8 h-8 mr-4 text-sm font-bold text-white bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">2</span>
                 <div>
-                  <p className="font-medium">Add your learning resources</p>
-                  <p className="text-sm text-gray-600">Keep track of books, videos, and courses you're using</p>
+                  <p className="font-semibold text-lg text-gray-800">Add your learning resources</p>
+                  <p className="text-sm text-gray-600 mt-1">Keep track of books, videos, and courses you're using</p>
                 </div>
               </li>
-              <li className="flex items-start">
-                <span className="inline-flex items-center justify-center w-6 h-6 mr-3 text-sm font-bold text-white bg-indigo-600 rounded-full flex-shrink-0">3</span>
+              <li className="flex items-start group">
+                <span className="inline-flex items-center justify-center w-8 h-8 mr-4 text-sm font-bold text-white bg-gradient-to-br from-pink-600 to-red-600 rounded-full flex-shrink-0 shadow-md group-hover:scale-110 transition-transform">3</span>
                 <div>
-                  <p className="font-medium">Set your learning goals</p>
-                  <p className="text-sm text-gray-600">Define daily, weekly, and monthly targets to stay motivated</p>
+                  <p className="font-semibold text-lg text-gray-800">Set your learning goals</p>
+                  <p className="text-sm text-gray-600 mt-1">Define daily, weekly, and monthly targets to stay motivated</p>
                 </div>
               </li>
             </ol>
@@ -208,23 +220,30 @@ function StatCard({ title, value, subtitle, progress, icon }: {
   progress?: number;
   icon: string;
 }) {
+  const getGradient = () => {
+    if (title.includes('Today')) return 'from-blue-500 to-cyan-500';
+    if (title.includes('Streak')) return 'from-orange-500 to-red-500';
+    return 'from-purple-500 to-pink-500';
+  };
+
   return (
-    <Card>
+    <Card className="card-hover border-none shadow-md hover:shadow-xl transition-all">
       <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-medium text-gray-600">{title}</h3>
-          <span className="text-2xl">{icon}</span>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</h3>
+          <span className="text-3xl">{icon}</span>
         </div>
-        <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
-        <p className="text-sm text-gray-500">{subtitle}</p>
+        <p className="text-4xl font-bold gradient-text mb-2">{value}</p>
+        <p className="text-sm text-gray-500 font-medium">{subtitle}</p>
         {progress !== undefined && (
-          <div className="mt-3">
-            <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="mt-4">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
               <div 
-                className="bg-indigo-600 h-2 rounded-full transition-all"
+                className={`bg-gradient-to-r ${getGradient()} h-2.5 rounded-full transition-all duration-500 shadow-sm`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
+            <p className="text-xs text-gray-500 mt-1.5 text-right">{Math.min(progress, 100).toFixed(0)}%</p>
           </div>
         )}
       </CardContent>
@@ -235,10 +254,10 @@ function StatCard({ title, value, subtitle, progress, icon }: {
 function QuickLink({ href, icon, title }: { href: string; icon: string; title: string }) {
   return (
     <Link href={href}>
-      <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
-        <span className="text-2xl mr-3">{icon}</span>
-        <span className="font-medium text-gray-700 group-hover:text-indigo-600">{title}</span>
-        <span className="ml-auto text-gray-400">→</span>
+      <div className="flex items-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all cursor-pointer group border border-transparent hover:border-purple-200 hover:shadow-sm">
+        <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">{icon}</span>
+        <span className="font-semibold text-gray-700 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all">{title}</span>
+        <span className="ml-auto text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all">→</span>
       </div>
     </Link>
   );
